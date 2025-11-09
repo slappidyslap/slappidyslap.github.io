@@ -47,6 +47,8 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+const mdConverter = new showdown.Converter();
+
 document.querySelectorAll('.details-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -63,7 +65,7 @@ document.querySelectorAll('.details-btn').forEach(btn => {
             
             const data = await response.json();
             const readmeContent = atob(data.content);
-            const htmlContent = parseMarkdown(readmeContent);
+            const htmlContent = mdConverter.makeHtml(readmeContent);
             modalBody.innerHTML = `<div class="readme-content">${htmlContent}</div>`;
             
         } catch (error) {
@@ -77,32 +79,3 @@ document.querySelectorAll('.details-btn').forEach(btn => {
         }
     });
 });
-
-function parseMarkdown(markdown) {
-    let html = markdown;
-    
-    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
-    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    html = html.replace(/_(.*?)_/g, '<em>$1</em>');
-    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-    html = html.replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-    html = html.replace(/!\[([^\]]*)\]\(([^\)]+)\)/g, '<img src="$2" alt="$1">');
-    html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
-    html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-    html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
-    
-    html = html.split('\n\n').map(para => {
-        if (!para.match(/^<(h\d|ul|ol|pre|li)/)) {
-            return `<p>${para}</p>`;
-        }
-        return para;
-    }).join('\n');
-    
-    return html;
-}
