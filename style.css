@@ -99,17 +99,42 @@ main {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0);
     z-index: 2000;
     padding: 2rem;
     overflow-y: auto;
 }
 
-.modal.active {
+.modal.opening {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    animation: fadeIn 0.3s ease;
+    animation: modalFadeIn 0.3s ease forwards;
+}
+
+.modal.closing {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    animation: modalFadeOut 0.3s ease forwards;
+}
+
+@keyframes modalFadeIn {
+    from {
+        background: rgba(255, 255, 255, 0);
+    }
+    to {
+        background: rgba(255, 255, 255, 0.95);
+    }
+}
+
+@keyframes modalFadeOut {
+    from {
+        background: rgba(255, 255, 255, 0.95);
+    }
+    to {
+        background: rgba(255, 255, 255, 0);
+    }
 }
 
 .modal-content {
@@ -118,6 +143,34 @@ main {
     width: 100%;
     margin-top: 4rem;
     margin-bottom: 4rem;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.modal.opening .modal-content {
+    animation: modalSlideUp 0.3s ease forwards;
+}
+
+.modal.closing .modal-content {
+    animation: modalSlideDown 0.3s ease forwards;
+}
+
+@keyframes modalSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes modalSlideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(30px);
+    }
 }
 
 .modal-close {
@@ -219,6 +272,11 @@ main {
 
     .project-description {
         font-size: 1rem;
+    }
+
+    .project-links {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .modal-content {

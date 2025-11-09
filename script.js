@@ -2,19 +2,48 @@ const modal = document.getElementById('projectModal');
 const modalBody = document.getElementById('modalBody');
 const modalClose = document.getElementById('modalClose');
 
-modalClose.addEventListener('click', () => {
-    modal.classList.remove('active');
-});
+let isAnimating = false;
+
+function openModal() {
+    if (isAnimating) return;
+    isAnimating = true;
+    
+    modal.style.display = 'flex';
+    modal.classList.remove('closing');
+    modal.classList.add('opening');
+    document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+        isAnimating = false;
+    }, 300);
+}
+
+function closeModal() {
+    if (isAnimating) return;
+    isAnimating = true;
+    
+    modal.classList.remove('opening');
+    modal.classList.add('closing');
+    
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('closing');
+        document.body.style.overflow = '';
+        isAnimating = false;
+    }, 300);
+}
+
+modalClose.addEventListener('click', closeModal);
 
 modal.addEventListener('click', (e) => {
     if (e.target === modal) {
-        modal.classList.remove('active');
+        closeModal();
     }
 });
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('active')) {
-        modal.classList.remove('active');
+    if (e.key === 'Escape' && modal.classList.contains('opening')) {
+        closeModal();
     }
 });
 
@@ -22,7 +51,7 @@ document.querySelectorAll('.details-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
         e.preventDefault();
         const projectName = btn.dataset.project;
-        modal.classList.add('active');
+        openModal();
         modalBody.innerHTML = '<div class="loader">Загрузка README...</div>';
         
         try {
