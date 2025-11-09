@@ -57,7 +57,6 @@ document.querySelectorAll('.details-btn').forEach(btn => {
 
         openModal();
         modalBody.innerHTML = '<div class="loader">Загрузка...</div>';
-        debugger;
         try {
             if (hasCustomDescription) {
                 const response = await fetch(`./${projectName}/index.html`);

@@ -1,3 +1,8 @@
+:root {
+    --main-fg: #1a1a1a;
+    --secondary-fg: #666;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,7 +12,7 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #fafafa;
-    color: #1a1a1a;
+    color: var(--main-fg);
     overflow: hidden;
     height: 100vh;
 }
@@ -46,14 +51,14 @@ main {
     font-size: 2.5rem;
     font-weight: 300;
     margin-bottom: 1.5rem;
-    color: #1a1a1a;
+    color: var(--main-fg);
     letter-spacing: -0.02em;
 }
 
 .project-description {
     font-size: 1.125rem;
     line-height: 1.7;
-    color: #666;
+    color: var(--secondary-fg);
     margin-bottom: 2rem;
     font-weight: 300;
 }
@@ -66,7 +71,7 @@ main {
 
 .link {
     font-size: 0.9rem;
-    color: #1a1a1a;
+    color: var(--main-fg);
     text-decoration: none;
     position: relative;
     font-weight: 400;
@@ -80,7 +85,7 @@ main {
     left: 0;
     width: 0;
     height: 1px;
-    background: #1a1a1a;
+    background: var(--main-fg);
     transition: width 0.3s ease;
 }
 
@@ -177,7 +182,7 @@ main {
 }
 
 .modal-close:hover {
-    color: #1a1a1a;
+    color: var(--main-fg);
 }
 
 .loader {
@@ -187,7 +192,7 @@ main {
 }
 
 .readme-content {
-    color: #1a1a1a;
+    color: var(--main-fg);
     line-height: 1.7;
 }
 
@@ -196,7 +201,7 @@ main {
 .readme-content h3,
 .readme-content h4 {
     margin: 2rem 0 1rem;
-    color: #1a1a1a;
+    color: var(--main-fg);
     font-weight: 300;
 }
 
@@ -212,7 +217,7 @@ main {
 
 .readme-content p {
     margin: 1rem 0;
-    color: #666;
+    color: var(--secondary-fg);
 }
 
 .readme-content code {
@@ -235,11 +240,11 @@ main {
 .readme-content ol {
     margin: 1rem 0;
     padding-left: 2rem;
-    color: #666;
+    color: var(--secondary-fg);
 }
 
 .readme-content a {
-    color: #1a1a1a;
+    color: var(--secondary-fg);
     text-decoration: underline;
 }
 
@@ -271,6 +276,15 @@ iframe {
 
 iframe {
     height: 350px;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 7px;
+  border-color: var(--secondary-fg);
+  color: var(--secondary-fg);
+  font-weight: normal;
 }
 
 @media (max-width: 768px) {
