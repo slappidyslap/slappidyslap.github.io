@@ -56,7 +56,7 @@ document.querySelectorAll('.details-btn').forEach(btn => {
         const hasCustomDescription = btn.dataset.customDescription === 'true';
 
         openModal();
-        modalBody.innerHTML = '<div class="loader">Загрузка README...</div>';
+        modalBody.innerHTML = '<div class="loader">Загрузка...</div>';
         debugger;
         try {
             if (hasCustomDescription) {
@@ -68,6 +68,13 @@ document.querySelectorAll('.details-btn').forEach(btn => {
                 
                 const htmlContent = await response.text();
                 modalBody.innerHTML = htmlContent;
+
+                modalBody.style.opacity = '0';
+                setTimeout(() => {
+                    modalBody.innerHTML = htmlContent;
+                    modalBody.style.transition = 'opacity 0.3s ease';
+                    modalBody.style.opacity = '1';
+                }, 150);
             } else {
                 const response = await fetch(`https://api.github.com/repos/slappidyslap/${projectName}/readme`);
                 
@@ -78,7 +85,13 @@ document.querySelectorAll('.details-btn').forEach(btn => {
                 const data = await response.json();
                 const readmeContent = decodeURIComponent(escape(atob(data.content)));
                 const htmlContent = mdConverter.makeHtml(readmeContent);
-                modalBody.innerHTML = `<div class="readme-content">${htmlContent}</div>`;
+                
+                modalBody.style.opacity = '0';
+                setTimeout(() => {
+                    modalBody.innerHTML = `<div class="readme-content">${htmlContent}</div>`;;
+                    modalBody.style.transition = 'opacity 0.3s ease';
+                    modalBody.style.opacity = '1';
+                }, 150);
             }
         } catch (error) {
             modalBody.innerHTML = `
