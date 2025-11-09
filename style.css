@@ -99,9 +99,7 @@ main {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0);
     z-index: 2000;
-    padding: 2rem;
     overflow-y: auto;
 }
 
@@ -119,30 +117,13 @@ main {
     animation: modalFadeOut 0.3s ease forwards;
 }
 
-@keyframes modalFadeIn {
-    from {
-        background: rgba(255, 255, 255, 0);
-    }
-    to {
-        background: rgba(255, 255, 255, 0.95);
-    }
-}
-
-@keyframes modalFadeOut {
-    from {
-        background: rgba(255, 255, 255, 0.95);
-    }
-    to {
-        background: rgba(255, 255, 255, 0);
-    }
-}
-
 .modal-content {
     background: #fff;
-    max-width: 800px;
+    max-width: 900px;
     width: 100%;
     margin-top: 4rem;
     margin-bottom: 4rem;
+    padding: 0 3rem 2rem 3rem;
     opacity: 0;
     transform: translateY(30px);
 }
@@ -192,10 +173,6 @@ main {
 
 .modal-close:hover {
     color: #1a1a1a;
-}
-
-.modal-body {
-    padding: 2rem 0;
 }
 
 .loader {
