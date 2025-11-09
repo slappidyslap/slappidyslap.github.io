@@ -53,21 +53,33 @@ document.querySelectorAll('.details-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
         e.preventDefault();
         const projectName = btn.dataset.project;
+        const hasCustomDescription = btn.dataset.customDescription === 'true';
+
         openModal();
         modalBody.innerHTML = '<div class="loader">Загрузка README...</div>';
-        
+        debugger;
         try {
-            const response = await fetch(`https://api.github.com/repos/slappidyslap/${projectName}/readme`);
-            
-            if (!response.ok) {
-                throw new Error('README не найден');
+            if (hasCustomDescription) {
+                const response = await fetch(`./${projectName}/index.html`);
+                
+                if (!response.ok) {
+                    throw new Error('Локальное описание не найдено');
+                }
+                
+                const htmlContent = await response.text();
+                modalBody.innerHTML = htmlContent;
+            } else {
+                const response = await fetch(`https://api.github.com/repos/slappidyslap/${projectName}/readme`);
+                
+                if (!response.ok) {
+                    throw new Error('README не найден');
+                }
+                
+                const data = await response.json();
+                const readmeContent = decodeURIComponent(escape(atob(data.content)));
+                const htmlContent = mdConverter.makeHtml(readmeContent);
+                modalBody.innerHTML = `<div class="readme-content">${htmlContent}</div>`;
             }
-            
-            const data = await response.json();
-            const readmeContent = atob(data.content);
-            const htmlContent = mdConverter.makeHtml(readmeContent);
-            modalBody.innerHTML = `<div class="readme-content">${htmlContent}</div>`;
-            
         } catch (error) {
             modalBody.innerHTML = `
                 <div class="readme-content">

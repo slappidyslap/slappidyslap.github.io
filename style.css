@@ -265,6 +265,27 @@ main {
     margin: 1rem 0;
 }
 
+blockquote {
+    border-left: 4px solid #afafaf;
+    margin: 20px 0;
+    padding-left: 15px;
+    color: #555;
+    background: #f3f7fc;
+}
+
+ul {
+    margin-left: 20px;
+}
+
+video {
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
 @media (max-width: 768px) {
     .project-title {
         font-size: 2rem;
