@@ -188,7 +188,8 @@ main {
 
 .readme-content h1,
 .readme-content h2,
-.readme-content h3 {
+.readme-content h3,
+.readme-content h4 {
     margin: 2rem 0 1rem;
     color: #1a1a1a;
     font-weight: 300;
@@ -254,13 +255,17 @@ ul {
     margin-left: 20px;
 }
 
-video {
+video,
+iframe {
     display: block;
     width: 100%;
-    max-width: 800px;
     margin: 20px 0;
-    border-radius: 10px;
+    border-radius: 7px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+iframe {
+    height: 350px;
 }
 
 @media (max-width: 768px) {
