@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleUserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">em-bank-rest</a> &gt; <a href="index.source.html" class="el_package">kg.musabaev.em_bank_rest.service.impl</a> &gt; <span class="el_source">SimpleUserService.java</span></div><h1>SimpleUserService.java</h1><pre class="source lang-java linenums">package kg.musabaev.em_bank_rest.service.impl;
+
+import kg.musabaev.em_bank_rest.dto.GetCreatePatchUserResponse;
+import kg.musabaev.em_bank_rest.dto.PatchUserRequest;
+import kg.musabaev.em_bank_rest.dto.UpdatePasswordRequest;
+import kg.musabaev.em_bank_rest.entity.User;
+import kg.musabaev.em_bank_rest.exception.PasswordValidationException;
+import kg.musabaev.em_bank_rest.exception.UserAlreadyExistsException;
+import kg.musabaev.em_bank_rest.exception.UserNotFoundException;
+import kg.musabaev.em_bank_rest.mapper.UserMapper;
+import kg.musabaev.em_bank_rest.repository.UserRepository;
+import kg.musabaev.em_bank_rest.repository.specification.UserSpecification;
+import kg.musabaev.em_bank_rest.security.SimpleUserDetails;
+import kg.musabaev.em_bank_rest.service.AuthService;
+import kg.musabaev.em_bank_rest.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class SimpleUserService implements UserService {
+
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
+
+    @Override
+    @Transactional(readOnly = true)
+    public PagedModel&lt;GetCreatePatchUserResponse&gt; getAll(UserSpecification filters, Pageable pageable) {
+<span class="fc" id="L35">        var users = userRepository.findAll(filters.build(), pageable);</span>
+<span class="fc" id="L36">        return new PagedModel&lt;&gt;(users.map(userMapper::toGetUserResponse));</span>
+    }
+
+    @Override
+    @Transactional
+    public GetCreatePatchUserResponse patchForAdmin(Long id, PatchUserRequest dto) {
+<span class="fc" id="L42">        User user = userRepository.findById(id)</span>
+<span class="fc" id="L43">                .orElseThrow(() -&gt; new UserNotFoundException(id));</span>
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (!user.getEmail().equalsIgnoreCase(dto.email())</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">                &amp;&amp; userRepository.existsByEmail(dto.email()))</span>
+<span class="fc" id="L47">            throw new UserAlreadyExistsException();</span>
+
+<span class="fc" id="L49">        return patchUser(dto, user);</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GetCreatePatchUserResponse getByIdForUser(SimpleUserDetails userDetails) {
+<span class="fc" id="L55">        var authUser = userDetails.getUser();</span>
+<span class="fc" id="L56">        return userMapper.toGetUserResponse(authUser);</span>
+    }
+
+    @Override
+    @Transactional
+    public GetCreatePatchUserResponse patchForUser(PatchUserRequest dto, SimpleUserDetails userDetails) {
+<span class="fc" id="L62">        var authUser = userDetails.getUser();</span>
+<span class="fc" id="L63">        return patchUser(dto, authUser);</span>
+    }
+
+    @Override
+    @Transactional
+    public void updatePassword(UpdatePasswordRequest dto, SimpleUserDetails userDetails) {
+<span class="fc" id="L69">        var authUser = userDetails.getUser();</span>
+<span class="fc" id="L70">        var oldPassword = dto.oldPassword();</span>
+<span class="fc" id="L71">        var newPassword = dto.newPassword();</span>
+
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (!passwordEncoder.matches(oldPassword, authUser.getPassword()))</span>
+<span class="fc" id="L74">            throw new PasswordValidationException(&quot;Invalid old password&quot;);</span>
+
+<span class="fc" id="L76">        authUser.setPassword(passwordEncoder.encode(newPassword));</span>
+<span class="fc" id="L77">        userRepository.save(authUser);</span>
+
+<span class="fc" id="L79">        authService.revokeAllUserRefreshTokens(authUser.getId());</span>
+<span class="fc" id="L80">    }</span>
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (!userRepository.existsById(id))</span>
+<span class="fc" id="L86">            throw new UserNotFoundException(id);</span>
+<span class="fc" id="L87">        userRepository.deleteById(id);</span>
+<span class="fc" id="L88">    }</span>
+
+    @Override
+    @Transactional(readOnly = true)
+    public GetCreatePatchUserResponse getByIdForAdmin(Long id) {
+<span class="fc" id="L93">        return userMapper.toGetUserResponse(userRepository.findById(id)</span>
+<span class="fc" id="L94">                .orElseThrow(() -&gt; new UserNotFoundException(id)));</span>
+    }
+
+    private GetCreatePatchUserResponse patchUser(PatchUserRequest dto, User user) {
+<span class="fc" id="L98">        userMapper.patch(dto, user);</span>
+<span class="fc" id="L99">        var persistedUser = userRepository.saveAndFlush(user);</span>
+<span class="fc" id="L100">        authService.revokeAllUserRefreshTokens(user.getId());</span>
+<span class="fc" id="L101">        return userMapper.toPatchUserResponse(persistedUser);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

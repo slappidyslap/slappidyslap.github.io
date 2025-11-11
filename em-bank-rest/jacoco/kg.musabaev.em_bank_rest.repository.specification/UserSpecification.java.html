@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserSpecification.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">em-bank-rest</a> &gt; <a href="index.source.html" class="el_package">kg.musabaev.em_bank_rest.repository.specification</a> &gt; <span class="el_source">UserSpecification.java</span></div><h1>UserSpecification.java</h1><pre class="source lang-java linenums">package kg.musabaev.em_bank_rest.repository.specification;
+
+import kg.musabaev.em_bank_rest.entity.User;
+import kg.musabaev.em_bank_rest.exception.JsonToEnumConversionFailedException;
+import kg.musabaev.em_bank_rest.security.Role;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
+
+import java.util.Locale;
+
+<span class="fc" id="L11">public record UserSpecification(</span>
+        String email,
+        String fullName,
+        Long id,
+        String role) {
+
+    public Specification&lt;User&gt; build() {
+<span class="nc bnc" id="L18" title="All 2 branches missed.">        if (role != null) {</span>
+            try {
+<span class="nc" id="L20">                Role.valueOf(role.toUpperCase(Locale.ROOT));</span>
+<span class="nc" id="L21">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L22">                throw new JsonToEnumConversionFailedException(role, Role.class);</span>
+<span class="nc" id="L23">            }</span>
+        }
+<span class="nc" id="L25">        return withEmail()</span>
+<span class="nc" id="L26">                .and(withFullName())</span>
+<span class="nc" id="L27">                .and(withId())</span>
+<span class="nc" id="L28">                .and(withRole());</span>
+    }
+
+    private Specification&lt;User&gt; withEmail() {
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        return ((root, query, cb) -&gt; StringUtils.hasText(email)</span>
+<span class="nc" id="L33">                ? cb.equal(root.get(&quot;email&quot;), email)</span>
+<span class="nc" id="L34">                : null);</span>
+    }
+
+    private Specification&lt;User&gt; withFullName() {
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        return ((root, query, cb) -&gt; StringUtils.hasText(fullName)</span>
+<span class="nc" id="L39">                ? cb.equal(root.get(&quot;fullName&quot;), fullName)</span>
+<span class="nc" id="L40">                : null);</span>
+    }
+
+    private Specification&lt;User&gt; withId() {
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        return ((root, query, cb) -&gt; id != null</span>
+<span class="nc" id="L45">                ? cb.equal(root.get(&quot;id&quot;), id)</span>
+<span class="nc" id="L46">                : null);</span>
+    }
+
+    private Specification&lt;User&gt; withRole() {
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        return ((root, query, cb) -&gt; StringUtils.hasText(role)</span>
+<span class="nc" id="L51">                ? cb.equal(root.get(&quot;role&quot;), role)</span>
+<span class="nc" id="L52">                : null);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

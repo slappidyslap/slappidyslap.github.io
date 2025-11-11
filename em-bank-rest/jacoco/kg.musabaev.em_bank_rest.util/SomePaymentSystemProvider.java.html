@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SomePaymentSystemProvider.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">em-bank-rest</a> &gt; <a href="index.source.html" class="el_package">kg.musabaev.em_bank_rest.util</a> &gt; <span class="el_source">SomePaymentSystemProvider.java</span></div><h1>SomePaymentSystemProvider.java</h1><pre class="source lang-java linenums">package kg.musabaev.em_bank_rest.util;
+
+import kg.musabaev.em_bank_rest.exception.PaymentSystemException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+import java.util.concurrent.ThreadLocalRandom;
+
+// https://medium.com/@gaddamnaveen192/encrypt-decrypt-database-records-at-field-level-in-spring-boot-096e21049559
+@Component
+<span class="fc" id="L14">@Slf4j</span>
+<span class="nc" id="L15">public class SomePaymentSystemProvider {</span>
+
+<span class="nc" id="L17">    private final String ALGORITHM = &quot;AES&quot;;</span>
+<span class="nc" id="L18">    private final String SECRET_KEY = &quot;MySecretKey12345&quot;;</span>
+
+    public String generateEncryptedRandomCardNumber() {
+<span class="nc" id="L21">        StringBuilder sb = new StringBuilder(16);</span>
+<span class="nc" id="L22">        sb.append(&quot;6&quot;);</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">        for (int i = 1; i &lt; 16; i++) {</span>
+<span class="nc" id="L24">            int d = ThreadLocalRandom.current().nextInt(0, 10);</span>
+<span class="nc" id="L25">            sb.append(d);</span>
+        }
+<span class="nc" id="L27">        return encryptCardNumber(sb.toString());</span>
+    }
+
+    public boolean compareEncrypterCardNumbers(String n1, String n2) {
+<span class="nc bnc" id="L31" title="All 4 branches missed.">        if (n1 == null || n2 == null) return false;</span>
+<span class="nc" id="L32">        return n1.equals(n2);</span>
+    }
+
+    public String encryptCardNumber(String cardNumber) throws PaymentSystemException {
+        try {
+<span class="nc" id="L37">            SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);</span>
+<span class="nc" id="L38">            Cipher cipher = Cipher.getInstance(ALGORITHM);</span>
+<span class="nc" id="L39">            cipher.init(Cipher.ENCRYPT_MODE, secretKey);</span>
+<span class="nc" id="L40">            return Base64.getEncoder().encodeToString(cipher.doFinal(cardNumber.getBytes()));</span>
+<span class="nc" id="L41">        } catch (Exception e) {</span>
+<span class="nc" id="L42">            log.error(e.getMessage());</span>
+<span class="nc" id="L43">            throw new PaymentSystemException(&quot;Error while encrypting&quot;);</span>
+        }
+    }
+
+    public String decryptCardNumber(String encryptedCardNumber) throws PaymentSystemException {
+        try {
+<span class="nc" id="L49">            SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);</span>
+<span class="nc" id="L50">            Cipher cipher = Cipher.getInstance(ALGORITHM);</span>
+<span class="nc" id="L51">            cipher.init(Cipher.DECRYPT_MODE, secretKey);</span>
+<span class="nc" id="L52">            return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedCardNumber)));</span>
+<span class="nc" id="L53">        } catch (Exception e) {</span>
+<span class="nc" id="L54">            log.error(e.getMessage());</span>
+<span class="nc" id="L55">            throw new PaymentSystemException(&quot;Error while decrypting&quot;);</span>
+        }
+    }
+
+    public String maskCardNumber(String encryptedCardNumber) throws PaymentSystemException {
+<span class="nc" id="L60">        return &quot;**** **** **** &quot; + decryptCardNumber(encryptedCardNumber).substring(12);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
