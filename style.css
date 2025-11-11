@@ -123,6 +123,7 @@ main {
 }
 
 .modal-content {
+    border-radius: 12px;
     background: #fff;
     max-width: 700px;
     width: 100%;
