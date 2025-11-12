@@ -47,7 +47,14 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-const mdConverter = new showdown.Converter();
+function setInnerHtml(innerHtml) {
+    modalBody.style.opacity = '0';
+    setTimeout(() => {
+        modalBody.innerHTML = innerHtml;
+        modalBody.style.transition = 'opacity 0.3s ease';
+        modalBody.style.opacity = '1';
+    }, 150);
+}
 
 document.querySelectorAll('.details-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
@@ -66,14 +73,8 @@ document.querySelectorAll('.details-btn').forEach(btn => {
                 }
                 
                 const htmlContent = await response.text();
-                modalBody.innerHTML = htmlContent;
 
-                modalBody.style.opacity = '0';
-                setTimeout(() => {
-                    modalBody.innerHTML = htmlContent;
-                    modalBody.style.transition = 'opacity 0.3s ease';
-                    modalBody.style.opacity = '1';
-                }, 150);
+                setInnerHtml(htmlContent);
             } else {
                 const response = await fetch(`https://api.github.com/repos/slappidyslap/${projectName}/readme`);
                 
@@ -83,14 +84,8 @@ document.querySelectorAll('.details-btn').forEach(btn => {
                 
                 const data = await response.json();
                 const readmeContent = decodeURIComponent(escape(atob(data.content)));
-                const htmlContent = mdConverter.makeHtml(readmeContent);
                 
-                modalBody.style.opacity = '0';
-                setTimeout(() => {
-                    modalBody.innerHTML = `<div class="readme-content">${htmlContent}</div>`;;
-                    modalBody.style.transition = 'opacity 0.3s ease';
-                    modalBody.style.opacity = '1';
-                }, 150);
+                setInnerHtml(`<md-block class="readme-content">${readmeContent}</md-block>`)
             }
         } catch (error) {
             modalBody.innerHTML = `
