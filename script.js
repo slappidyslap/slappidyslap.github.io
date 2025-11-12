@@ -57,14 +57,6 @@ function setInnerHtml(innerHtml) {
     }, 150);
 }
 
-function enableHighlightSyntax() {
-    setTimeout(() => {
-        document.querySelectorAll('#modalBody pre code').forEach((el) => {
-            hljs.highlightElement(el);
-        });
-    }, 700);
-}
-
 document.querySelectorAll('.details-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -109,3 +101,49 @@ document.querySelectorAll('.details-btn').forEach(btn => {
         
     });
 });
+
+// ====== работа с syntax highlight ======
+
+function enableHighlightSyntax() {
+    setTimeout(() => {
+        document.querySelectorAll('#modalBody pre code').forEach((el) => {
+            hljs.highlightElement(el);
+        });
+    }, 700);
+}
+
+// ====== работа с url параметрами ======
+
+function handleAnchorLinks() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectName = urlParams.get('project');
+    const anchor = urlParams.get('anchor');
+    
+    if (projectName) {
+        const projectSection = document.querySelector(`[data-project="${projectName}"]`);
+        if (projectSection) {
+
+            projectSection.scrollIntoView({ behavior: 'smooth' });
+            
+            setTimeout(() => {
+                const detailsBtn = projectSection.querySelector('.details-btn');
+                if (detailsBtn) {
+                    detailsBtn.click();
+                    
+                    if (anchor) {
+                        setTimeout(() => {
+                            const targetElement = document.getElementById(anchor);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }, 400);
+                    }
+                }
+            }, 500);
+        }
+    }
+}
+
+handleAnchorLinks();
+
+window.addEventListener('popstate', handleAnchorLinks);
