@@ -53,7 +53,16 @@ function setInnerHtml(innerHtml) {
         modalBody.innerHTML = innerHtml;
         modalBody.style.transition = 'opacity 0.3s ease';
         modalBody.style.opacity = '1';
+
     }, 150);
+}
+
+function enableHighlightSyntax() {
+    setTimeout(() => {
+        document.querySelectorAll('#modalBody pre code').forEach((el) => {
+            hljs.highlightElement(el);
+        });
+    }, 700);
 }
 
 document.querySelectorAll('.details-btn').forEach(btn => {
@@ -64,6 +73,8 @@ document.querySelectorAll('.details-btn').forEach(btn => {
 
         openModal();
         modalBody.innerHTML = '<div class="loader">Загрузка...</div>';
+        
+        let htmlContent = '';
         try {
             if (hasCustomDescription) {
                 const response = await fetch(`./${projectName}/index.html`);
@@ -72,9 +83,7 @@ document.querySelectorAll('.details-btn').forEach(btn => {
                     throw new Error('Локальное описание не найдено');
                 }
                 
-                const htmlContent = await response.text();
-
-                setInnerHtml(htmlContent);
+                htmlContent = await response.text();
             } else {
                 const response = await fetch(`https://api.github.com/repos/slappidyslap/${projectName}/readme`);
                 
@@ -84,9 +93,10 @@ document.querySelectorAll('.details-btn').forEach(btn => {
                 
                 const data = await response.json();
                 const readmeContent = decodeURIComponent(escape(atob(data.content)));
-                
-                setInnerHtml(`<md-block class="readme-content">${readmeContent}</md-block>`)
+                htmlContent = `<md-block class="readme-content">${readmeContent}</md-block>`
             }
+            setInnerHtml(htmlContent);
+            enableHighlightSyntax();
         } catch (error) {
             modalBody.innerHTML = `
                 <div class="readme-content">
@@ -96,5 +106,6 @@ document.querySelectorAll('.details-btn').forEach(btn => {
                 </div>
             `;
         }
+        
     });
 });
