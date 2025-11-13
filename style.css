@@ -315,6 +315,9 @@ table tr:last-child td:first-child {
 table tr:last-child td:last-child {
     border-bottom-right-radius: 6px;
 } */
+img {
+    border-radius: 6px;
+}
 
 @media (max-width: 768px) {
     .project-title {
